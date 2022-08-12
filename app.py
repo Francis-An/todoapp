@@ -1,5 +1,3 @@
-from contextlib import nullcontext
-from email.policy import default
 import sys
 from flask import abort,redirect,url_for
 from flask import Flask,render_template,request,jsonify
@@ -58,7 +56,18 @@ def set_completed_todo(todo_id):
     return redirect(url_for('index'))
 
     
+@app.route('/todos/<todo_id>', methods=['DELETE'])
+def delete_todo(todo_id):
+    try:
+        Todo.query.filter_by(id = todo_id).delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+    return jsonify({'success': True})
+
 
 @app.route('/')
 def index():
-    return render_template('index.html', data=Todo.query.all())
+    return render_template('index.html', data=Todo.query.order_by('id').all())

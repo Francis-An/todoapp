@@ -13,6 +13,19 @@
             padding: 0;
             margin: 0;
         }
+        td {
+            width: 150px;
+            padding: 6px;
+        }
+        li button{
+            background: white;
+            color: red;
+            outline: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            
+        }
     </style>
 </head>
 <body>
@@ -27,12 +40,49 @@
     <!-- The View -->
     <ul id="todos">
         {% for d in data %}
-        <li><input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %} />{{ d.description }}</li>
+        <li id="list">
+            <table>
+                <tr>
+                    <td>
+                        <input class="check-completed" data-id="{{ d.id }}" 
+                        type="checkbox" {% if d.completed %} checked {% endif %} />
+                        {{ d.description }}
+                    </td>
+                    <td>
+                        <button id="delbtn" data-id="{{ d.id }}">&cross;</button>
+                    </td>
+                </tr>
+            </table>
+        </li>
         {% endfor %}
     </ul>
 
 <script>
+        // Start of deleting items
     
+        const delItems = document.querySelectorAll('#delbtn');
+        for (i = 0; i < delItems.length; i++) {
+            const delItem = delItems[i];
+            delItem.addEventListener('click', e => {
+                const todoId = e.target.dataset['id'];
+                console.log(todoId)
+                fetch('/todos/' + todoId, {
+                    method: 'DELETE',
+                    
+                 })
+                .then ( (e) => {
+                    console.log(e);
+                    document.getElementById('error').className='hidden';
+                })
+                .catch ( () => {
+                    document.getElementById('error').className='';
+                })
+            });
+        }
+
+        // End of deleting list
+
+    // Checking the boxes to complete
     const checkboxes = document.querySelectorAll('.check-completed');
     for (i = 0; i < checkboxes.length; i++) {
         const checkbox = checkboxes[i];
@@ -59,8 +109,9 @@
             })
         });
     }
+     // End of the completed list
     
-    
+    //  Start of creating new list
     const descInput = document.getElementById('description');
     document.getElementById('form').addEventListener('submit', e => {
         e.preventDefault()
@@ -91,6 +142,7 @@
         })
     })
 
+    // End of creating List
 
     // const descInput = document.getElementById('description');
     // document.getElementById('form').addEventListener('submit', e => {
