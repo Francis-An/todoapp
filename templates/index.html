@@ -14,7 +14,7 @@
             margin: 0;
         }
         td {
-            width: 150px;
+            width: 200px;
             padding: 6px;
         }
         li button{
@@ -26,36 +26,61 @@
             cursor: pointer;
             
         }
+        .lists-wrapper, .todos-wrapper {
+            display: inline-block;
+            vertical-align: top;
+            /* padding: 10px; */
+        }
+        .todos-wrapper {
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
-    <form id="form">
-        <label for="description">Add new List</label><br/>
-        <input type="text" name="description" id="description">
-        <input type="submit" value="Create">
-    </form>
+    <div class="lists-wrapper">
+        <ul id="lists">
+            {% for list in lists %}
+            <li>
+                <a href="/lists/{{ list.id }}">
+                    {{ list.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        
+    </div>
 
-    <div id="error" class="hidden">Something went wrong!</div>
+        <div class="todos-wrapper">
+            <h4>{{ active_list.name }}</h4>
+            <form id="form">
+                <label for="description">Add new List</label><br/>
+                <input type="text" name="description" id="description">
+                <input type="submit" value="Create">
+            </form>
 
-    <!-- The View -->
-    <ul id="todos">
-        {% for d in data %}
-        <li id="list">
-            <table>
-                <tr>
-                    <td>
-                        <input class="check-completed" data-id="{{ d.id }}" 
-                        type="checkbox" {% if d.completed %} checked {% endif %} />
-                        {{ d.description }}
-                    </td>
-                    <td>
-                        <button id="delbtn" data-id="{{ d.id }}">&cross;</button>
-                    </td>
-                </tr>
-            </table>
-        </li>
-        {% endfor %}
-    </ul>
+            <div id="error" class="hidden">Something went wrong!</div>
+        
+            <!-- The View -->
+            <ul id="todos">
+                {% for todo in todos %}
+                <li id="list">
+                    <table>
+                        <tr>
+                            <td>
+                                <input class="check-completed" data-id="{{ todo.id }}" 
+                                type="checkbox" {% if todo.completed %} checked {% endif %} />
+                                {{ todo.description }}
+                            </td>
+                            <td>
+                                <button id="delbtn" data-id="{{ todo.id }}">&cross;</button>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
 
 <script>
         // Start of deleting items
